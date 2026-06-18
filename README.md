@@ -3,6 +3,8 @@
 This folder contains the Python side of the AlmostRacing project: a TCP client that connects to the Unity game, reads the agent state, and either trains a DQN policy or runs a rule-based baseline.
 
 Unity acts as the **server** (`127.0.0.1:5005`). Python is the **client** and must be started **after** Unity is in Play mode with AI enabled.
+# Unity Game URL:
+### https://drive.google.com/drive/folders/1YSKSSqYz0qgACl7XVEAZ0lfeylgjKusw?usp=sharing
 
 ## Prerequisites
 
