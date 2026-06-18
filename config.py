@@ -1,23 +1,52 @@
-PORT = 5005
-HOST = "127.0.0.1"
+from __future__ import annotations
 
-MODELS_DIR = "models"
+from dataclasses import dataclass
 
-GAMMA = 0.99
-LEARNING_RATE = 3e-4
-FORCE_X_CLIP = 1.0
-NORMALIZE_RETURNS = False
-SAVE_EVERY_EPISODES = 5
-MULTI_AGENT_AVG_TRAJECTORIES = True
+from environs import Env
 
-DIAG_LOG_EVERY_N_STEPS = 60
 
-ENTROPY_COEF_START = 0.03
-ENTROPY_COEF_END = 0.003
-ENTROPY_DECAY_STEPS = 8000
+@dataclass(frozen=True)
+class Settings:
+    host: str
+    port: int
+    model_name: str
+    models_dir: str
+    load_episode: int | None
+    load_latest: bool
+    train: bool
+    baseline: bool
+    epsilon: float
+    epsilon_min: float
+    epsilon_decay: float
+    max_episodes: int
+    reconnect_delay: float
+    save_every_episodes: int
+    evaluation_dir: str
+    train_every_n_steps: int
 
-ELITE_WEIGHT = 2.5
 
-GAP_SHAPING_ENABLED = True
-GAP_SHAPING_W_X = 0.06
-GAP_SHAPING_W_Z = 0.0
+def load_settings() -> Settings:
+    env = Env()
+    env.read_env()
+
+    load_episode_raw = env.str("MODEL_LOAD_EPISODE", "")
+    load_episode = int(load_episode_raw) if load_episode_raw.strip() else None
+
+    return Settings(
+        host=env.str("HOST", "127.0.0.1"),
+        port=env.int("PORT", 5005),
+        model_name=env.str("MODEL_NAME", "racing_dqn"),
+        models_dir=env.str("MODELS_DIR", "models"),
+        load_episode=load_episode,
+        load_latest=env.bool("LOAD_LATEST", False),
+        train=env.bool("TRAIN", False),
+        baseline=env.bool("BASELINE", False),
+        epsilon=env.float("EPSILON", 1.0),
+        epsilon_min=env.float("EPSILON_MIN", 0.05),
+        epsilon_decay=env.float("EPSILON_DECAY", 0.995),
+        max_episodes=env.int("MAX_EPISODES", 500),
+        reconnect_delay=env.float("RECONNECT_DELAY", 2.0),
+        save_every_episodes=env.int("SAVE_EVERY_EPISODES", 25),
+        evaluation_dir=env.str("EVALUATION_DIR", "evaluation"),
+        train_every_n_steps=env.int("TRAIN_EVERY_N_STEPS", 4),
+    )
